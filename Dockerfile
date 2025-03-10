@@ -11,7 +11,7 @@ RUN corepack enable \
     && corepack prepare pnpm@10.6.2 --activate
 
 # Copy package files and prisma schema
-COPY package.json pnpm-lock.yaml ./
+COPY package.json ./
 COPY tsconfig.json ./
 COPY tailwind.config.js ./
 COPY nuxt.config.ts ./
