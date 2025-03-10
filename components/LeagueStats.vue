@@ -372,8 +372,12 @@ const importantMatchesCount = computed(() => {
     return matches.value.matches.filter(match => !isKeyMatch(match) && isCloseMatch(match)).length
 })
 
+// Type pour l'interface exposée
+interface LeagueStatsExpose {
+    keyMatchesCount: ComputedRef<number>
+}
+
 // Au montage, on ne force pas la mise à jour
-import { onMounted } from 'vue'
 onMounted(() => {
     const currentForceUpdate = forceUpdate.value
     forceUpdate.value = false  // Désactiver temporairement
@@ -381,5 +385,10 @@ onMounted(() => {
     fetchTeams()
     forceUpdate.value = currentForceUpdate  // Restaurer la valeur
 })
+
+// Exposer keyMatchesCount pour le composant parent
+defineExpose({
+    keyMatchesCount
+} satisfies LeagueStatsExpose)
 
 </script>

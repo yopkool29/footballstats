@@ -46,6 +46,11 @@ export default defineNuxtConfig({
             apiBaseUrl: process.env.API_BASE_URL || 'http://localhost:3000',
             premierLeagueId: process.env.PREMIER_LEAGUE_ID,
             ligue1Id: process.env.LIGUE_1_ID,
+            bundesligaId: process.env.BUNDESLIGA_ID,
+            serieAId: process.env.SERIE_A_ID,
+            laLigaId: process.env.LA_LIGA_ID,
+            eredivisieId: process.env.EREDIVISIE_ID,
+            primeiraLigaId: process.env.PRIMEIRA_LIGA_ID,
         },
     },
 })
