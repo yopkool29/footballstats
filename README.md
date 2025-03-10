@@ -24,7 +24,7 @@ footstats/
 ├── pages/             # Routes de l'application
 ├── server/
 │   └── api/          # Routes API du serveur
-├── cache/            # Stores Pinia
+├── cache/            # Cache
 ├── types/            # Types TypeScript
 └── utils/            # Utilitaires et helpers
 ```
