@@ -16,7 +16,18 @@
                         <span>Bottom 4</span>
                     </div>
                 </div>
+
+                <div class="flex ml-4 gap-x-2 items-center">
+                    <span class="text-gray-700">
+                        github =>
+                    </span>
+                    <a href="https://github.com/yopkool29/footballstats" target="_blank" rel="noopener noreferrer" class="flex items-center text-gray-700 hover:text-gray-900">
+                        <UIcon name="i-simple-icons-github" class="w-6 h-6" />
+                    </a>
+                </div>
+
             </div>
+
         </UContainer>
     </footer>
 </template>

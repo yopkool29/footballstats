@@ -37,6 +37,11 @@ const tabs = [
                                 <UBadge color="gray">Beta</UBadge>
                             </div>
                         </div>
+                        <span>
+                            <a href="https://github.com/yopkool29/footballstats" target="_blank" rel="noopener noreferrer" class="flex items-center text-gray-700 hover:text-gray-900">
+                                <UIcon name="i-simple-icons-github" class="w-6 h-6" />
+                            </a>
+                        </span>
                     </div>
                 </template>
 
