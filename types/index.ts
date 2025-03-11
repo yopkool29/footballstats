@@ -53,7 +53,7 @@ export interface LeagueData {
 export interface LeagueMatches {
     leagueId: League
     matches: Match[]
-    lastUpdated: string
+    lastUpdated?: string
 }
 
 export interface ApiResponse<T> {
@@ -61,4 +61,4 @@ export interface ApiResponse<T> {
     fromCache: boolean
 }
 
-export type League = 'PL' | 'FL1'  // Premier League | Ligue 1
+export type League = string

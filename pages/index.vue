@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { League } from '~/types'
 
 const config = useRuntimeConfig()
+
 const tabs = [
     { key: config.public.premierLeagueId, label: 'Premier League' },
     { key: config.public.ligue1Id, label: 'Ligue 1' },
@@ -11,6 +11,7 @@ const tabs = [
     { key: config.public.eredivisieId, label: 'Eredivisie' },
     { key: config.public.primeiraLigaId, label: 'Primeira Liga' }
 ]
+
 </script>
 
 <template>
@@ -48,6 +49,9 @@ const tabs = [
                 <p class="text-gray-600">
                     Analysez les performances des équipes de Premier League et de Ligue 1
                 </p>
+
+                <KeyMatches />
+
             </UCard>
 
             <UTabs :items="tabs" class="mb-8">

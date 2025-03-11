@@ -13,8 +13,8 @@ RUN corepack enable \
 # Copy package files and prisma schema
 COPY package.json ./
 COPY tsconfig.json ./
-COPY tailwind.config.js ./
 COPY nuxt.config.ts ./
+COPY tailwind.config.js ./
 
 # Install dependencies and prepare Nuxt
 RUN pnpm install

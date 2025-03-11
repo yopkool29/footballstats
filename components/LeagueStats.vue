@@ -2,14 +2,16 @@
     <UCard class="mb-8">
         <template #header>
             <div class="flex justify-between items-center">
-                <h2 class="text-2xl font-bold text-gray-700">{{ leagueName }}</h2>
+                <div class="flex items-center gap-3">
+                    <h2 class="text-2xl font-bold text-gray-700">{{ leagueName }}</h2>
+                    <div v-if="matches?.lastUpdated" class="text-xs text-gray-500 flex items-center gap-1">
+                        <UIcon name="i-heroicons-clock" class="w-4 h-4" />
+                        Dernière mise à jour matchs : {{ formatLastUpdated(matches.lastUpdated) }}
+                    </div>
+                </div>
                 <div class="flex items-center gap-4">
                     <UTooltip text="Ignore le cache et force la récupération des données depuis l'API">
-                        <UCheckbox 
-                            v-model="forceUpdate" 
-                            label="Forcer la mise à jour"
-                            class="cursor-help"
-                        />
+                        <UCheckbox v-model="forceUpdate" label="Forcer la mise à jour" class="cursor-help" />
                     </UTooltip>
                     <div class="flex gap-2">
                         <UButton :loading="isLoadingTeams" color="orange" @click="fetchTeams">
@@ -103,7 +105,7 @@
                                 <div class="flex flex-col items-end">
                                     <div class="flex items-center gap-2">
                                         <img v-if="match.homeTeam.crest" :src="match.homeTeam.crest" :alt="match.homeTeam.name" class="w-6 h-6 object-contain" loading="lazy" />
-                                        <span class="font-medium text-gray-900">{{ match.homeTeam.name }}</span>
+                                        <span class="font-medium text-gray-900">{{ match.homeTeam.name }} - [{{ match.homeTeam.position }}]</span>
                                     </div>
                                     <div class="flex items-center gap-1">
                                         <span class="text-xs" :class="{
@@ -131,7 +133,7 @@
                                 <div class="flex flex-col items-start">
                                     <div class="flex items-center gap-2">
                                         <img v-if="match.awayTeam.crest" :src="match.awayTeam.crest" :alt="match.awayTeam.name" class="w-6 h-6 object-contain" loading="lazy" />
-                                        <span class="font-medium text-gray-900">{{ match.awayTeam.name }}</span>
+                                        <span class="font-medium text-gray-900">{{ match.awayTeam.name }} - [{{ match.awayTeam.position }}]</span>
                                     </div>
                                     <div class="flex items-center gap-1">
                                         <span class="text-xs" :class="{
@@ -199,6 +201,8 @@
 <script setup lang="ts">
 import type { LeagueData, LeagueMatches, League, Team, Match, MatchTeam, ApiResponse } from '~/types'
 import FootstatsFooter from '~/components/FootstatsFooter.vue'
+
+const { isTopTeam, isBottomTeam, getTeamForm, isCloseMatch, getPointsDifference, isKeyMatch } = useLeagueStats()
 
 const props = defineProps<{
     leagueName: string
@@ -293,6 +297,17 @@ const formatDate = (dateStr: string) => {
     }).format(date)
 }
 
+const formatLastUpdated = (dateStr: string) => {
+    const date = new Date(dateStr)
+    return new Intl.DateTimeFormat('fr-FR', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        hour: 'numeric',
+        minute: 'numeric'
+    }).format(date)
+}
+
 const fetchTeams = async (from_cache = false) => {
     isLoadingTeams.value = true
     try {
@@ -327,41 +342,6 @@ const fetchMatches = async (from_cache = false) => {
     } finally {
         isLoadingMatches.value = false
     }
-}
-
-const isTopTeam = (team: Team | MatchTeam) => {
-    return leagueData.value?.topTeams.some(t => t.id === team.id) ?? false
-}
-
-const isBottomTeam = (team: Team | MatchTeam) => {
-    return leagueData.value?.bottomTeams.some(t => t.id === team.id) ?? false
-}
-
-const getTeamForm = (position: number) => {
-    if (position <= 4) return 'Excellente forme'
-    if (position <= 8) return 'Très bonne forme'
-    if (position <= 12) return 'Bonne forme'
-    if (position <= 16) return 'Forme moyenne'
-    return 'En difficulté'
-}
-
-const isCloseMatch = (match: Match) => {
-    const positionDiff = Math.abs(match.homeTeam.position - match.awayTeam.position)
-    return positionDiff <= 3
-}
-
-const getPointsDifference = (match: Match) => {
-    const diff = Math.abs(match.homeTeam.points - match.awayTeam.points)
-    return diff
-}
-
-const isKeyMatch = (match: Match) => {
-    const isHomeTeamTop4 = match.homeTeam.position <= 4
-    const isAwayTeamTop4 = match.awayTeam.position <= 4
-    const isHomeTeamBottom4 = match.homeTeam.position >= 17
-    const isAwayTeamBottom4 = match.awayTeam.position >= 17
-
-    return (isHomeTeamTop4 && isAwayTeamBottom4) || (isAwayTeamTop4 && isHomeTeamBottom4)
 }
 
 const keyMatchesCount = computed(() => {
