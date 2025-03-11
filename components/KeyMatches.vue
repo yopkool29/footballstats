@@ -45,87 +45,35 @@
                             :key="match.id" 
                             class="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors border-2 border-yellow-400"
                         >
-                            <!-- En-tête avec date et badges -->
-                            <div class="mb-4 flex items-center gap-2">
-                                <UIcon name="i-heroicons-calendar-days" class="w-4 h-4" />
-                                <span class="text-sm font-bold">Match #{{ index + 1 }} - {{ formatDate(match.date) }}</span>
-                                <UBadge color="yellow" class="ml-2" size="xs">
-                                    Match clé
-                                </UBadge>
-                                <span v-if="getPointsDifference(match)" class="text-xs ml-2">
-                                    <UBadge :color="getPointsDifference(match) <= 3 ? 'orange' : 'gray'" size="xs" class="transition-opacity hover:opacity-80">
-                                        {{ getPointsDifference(match) }} point{{ getPointsDifference(match) > 1 ? 's' : '' }} d'écart
+                            <MatchDisplay 
+                                :match="match" 
+                                :getTeamForm="getTeamForm" 
+                                :getPointsDifference="getPointsDifference"
+                                :formatDate="formatDate"
+                            >
+                                <template #match-number>Match #{{ index + 1 }} - </template>
+                                <template #match-badges>
+                                    <UBadge color="yellow" class="ml-2" size="xs">
+                                        Match clé
                                     </UBadge>
-                                </span>
-                            </div>
-                            
-                            <!-- Affichage des équipes -->
-                            <div class="grid grid-cols-11 items-center text-center gap-4">
-                                <!-- Équipe domicile -->
-                                <div class="col-span-5 flex items-center justify-end gap-3">
-                                    <div class="flex flex-col items-end">
-                                        <div class="flex items-center gap-2">
-                                            <img 
-                                                v-if="match.homeTeam.crest" 
-                                                :src="match.homeTeam.crest" 
-                                                :alt="match.homeTeam.name"
-                                                class="h-6 w-6 object-contain"
-                                                loading="lazy"
-                                            />
-                                            <span class="font-medium text-gray-900">{{ match.homeTeam.name }} - [{{ match.homeTeam.position }}]</span>
-                                        </div>
-                                        <div class="flex items-center gap-1">
-                                            <span class="text-xs" :class="{
-                                                'text-green-600': match.homeTeam.position <= 4,
-                                                'text-yellow-600': match.homeTeam.position > 4 && match.homeTeam.position < 17,
-                                                'text-red-600': match.homeTeam.position >= 17
-                                            }">
-                                                {{ getTeamForm(match.homeTeam.position) }}
-                                            </span>
-                                            <UBadge v-if="match.homeTeam.position <= 4" color="green" size="xs" class="ml-1 transition-opacity hover:opacity-80">
-                                                Top 4
-                                            </UBadge>
-                                            <UBadge v-if="match.homeTeam.position >= 17" color="red" size="xs" class="ml-1 transition-opacity hover:opacity-80">
-                                                Bottom 4
-                                            </UBadge>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- VS au milieu -->
-                                <div class="font-bold text-gray-400 text-lg">VS</div>
-                                
-                                <!-- Équipe extérieur -->
-                                <div class="col-span-5 flex items-center justify-start gap-3">
-                                    <div class="flex flex-col items-start">
-                                        <div class="flex items-center gap-2">
-                                            <img 
-                                                v-if="match.awayTeam.crest" 
-                                                :src="match.awayTeam.crest" 
-                                                :alt="match.awayTeam.name"
-                                                class="h-6 w-6 object-contain"
-                                                loading="lazy"
-                                            />
-                                            <span class="font-medium text-gray-900">{{ match.awayTeam.name }} - [{{ match.awayTeam.position }}]</span>
-                                        </div>
-                                        <div class="flex items-center gap-1">
-                                            <span class="text-xs" :class="{
-                                                'text-green-600': match.awayTeam.position <= 4,
-                                                'text-yellow-600': match.awayTeam.position > 4 && match.awayTeam.position < 17,
-                                                'text-red-600': match.awayTeam.position >= 17
-                                            }">
-                                                {{ getTeamForm(match.awayTeam.position) }}
-                                            </span>
-                                            <UBadge v-if="match.awayTeam.position <= 4" color="green" size="xs" class="ml-1 transition-opacity hover:opacity-80">
-                                                Top 4
-                                            </UBadge>
-                                            <UBadge v-if="match.awayTeam.position >= 17" color="red" size="xs" class="ml-1 transition-opacity hover:opacity-80">
-                                                Bottom 4
-                                            </UBadge>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                                </template>
+                                <template #home-team-badges="{ team }">
+                                    <UBadge v-if="team.position <= 4" color="green" size="xs" class="ml-1 transition-opacity hover:opacity-80">
+                                        Top 4
+                                    </UBadge>
+                                    <UBadge v-if="team.position >= 17" color="red" size="xs" class="ml-1 transition-opacity hover:opacity-80">
+                                        Bottom 4
+                                    </UBadge>
+                                </template>
+                                <template #away-team-badges="{ team }">
+                                    <UBadge v-if="team.position <= 4" color="green" size="xs" class="ml-1 transition-opacity hover:opacity-80">
+                                        Top 4
+                                    </UBadge>
+                                    <UBadge v-if="team.position >= 17" color="red" size="xs" class="ml-1 transition-opacity hover:opacity-80">
+                                        Bottom 4
+                                    </UBadge>
+                                </template>
+                            </MatchDisplay>
                         </div>
                     </div>
                 </section>
@@ -143,6 +91,7 @@ import { computed, ref, onMounted } from 'vue'
 import { useLeagueData } from '~/composables/useLeagueData'
 import { useLeagueStats } from '~/composables/useLeagueStats'
 import type { Match, MatchTeam } from '~/types'
+import MatchDisplay from '~/components/MatchDisplay.vue'
 
 const { isLoading, error, leagues, matchesByLeague, fetchAllLeaguesMatches, allLeagues } = useLeagueData()
 const { isKeyMatch } = useLeagueStats()

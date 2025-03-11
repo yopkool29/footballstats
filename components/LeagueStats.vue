@@ -13,7 +13,7 @@
                     <UTooltip text="Ignore le cache et force la récupération des données depuis l'API">
                         <UCheckbox v-model="forceUpdate" label="Forcer la mise à jour" class="cursor-help" />
                     </UTooltip>
-                    <div class="flex gap-2">
+                    <div class="flex items-center gap-2">
                         <UButton :loading="isLoadingTeams" color="orange" @click="fetchTeams">
                             {{ isLoadingTeams ? 'Chargement...' : 'Récupérer les équipes' }}
                         </UButton>
@@ -85,78 +85,58 @@
                 </div>
                 <div v-if="matches.matches.length" class="space-y-4">
                     <div v-for="(match, index) in sortedMatches" :key="match.id" class="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors border border-gray-200" :class="{ 'border-yellow-400 border-2': isKeyMatch(match) }">
-                        <div class="mb-4 flex items-center gap-2">
-                            <UIcon name="i-heroicons-calendar-days" class="w-4 h-4" />
-                            <span class="text-sm font-bold">Match #{{ index + 1 }} - {{ formatDate(match.date) }}</span>
-                            <UBadge v-if="isKeyMatch(match)" color="yellow" class="ml-2" size="xs">
-                                Match clé
-                            </UBadge>
-                            <UBadge v-else-if="isCloseMatch(match)" color="orange" class="ml-2" size="xs">
-                                Match important
-                            </UBadge>
-                            <span v-if="getPointsDifference(match)" class="text-xs ml-2">
-                                <UBadge :color="getPointsDifference(match) <= 3 ? 'orange' : 'gray'" size="xs" class="transition-opacity hover:opacity-80">
-                                    {{ getPointsDifference(match) }} point{{ getPointsDifference(match) > 1 ? 's' : '' }} d'écart
+                        <MatchDisplay 
+                            :match="match" 
+                            :getTeamForm="getTeamForm" 
+                            :getPointsDifference="getPointsDifference"
+                            :formatDate="formatDate"
+                        >
+                            <template #match-number>Match #{{ index + 1 }} - </template>
+                            <template #match-badges>
+                                <UBadge v-if="isKeyMatch(match)" color="yellow" class="ml-2" size="xs">
+                                    Match clé
                                 </UBadge>
-                            </span>
-                        </div>
-                        <div class="grid grid-cols-11 items-center text-center gap-4">
-                            <div class="col-span-5 flex items-center justify-end gap-3">
-                                <div class="flex flex-col items-end">
-                                    <div class="flex items-center gap-2">
-                                        <img v-if="match.homeTeam.crest" :src="match.homeTeam.crest" :alt="match.homeTeam.name" class="w-6 h-6 object-contain" loading="lazy" />
-                                        <span class="font-medium text-gray-900">{{ match.homeTeam.name }} - [{{ match.homeTeam.position }}]</span>
-                                    </div>
-                                    <div class="flex items-center gap-1">
-                                        <span class="text-xs" :class="{
-                                            'text-green-600': match.homeTeam.position <= 4,
-                                            'text-yellow-600': match.homeTeam.position > 4 && match.homeTeam.position < 17,
-                                            'text-red-600': match.homeTeam.position >= 17
-                                        }">
-                                            {{ getTeamForm(match.homeTeam.position) }}
-                                        </span>
-                                        <UTooltip v-if="isTopTeam(match.homeTeam)" text="Cette équipe fait officiellement partie du top 4 selon les données de l'API">
-                                            <UBadge color="green" size="xs" class="ml-1 transition-opacity hover:opacity-80">
-                                                Top 4
-                                            </UBadge>
-                                        </UTooltip>
-                                        <UTooltip v-if="isBottomTeam(match.homeTeam)" text="Cette équipe fait officiellement partie du bottom 4 selon les données de l'API">
-                                            <UBadge color="red" size="xs" class="ml-1 transition-opacity hover:opacity-80">
-                                                Bottom 4
-                                            </UBadge>
-                                        </UTooltip>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="font-bold text-gray-400 text-lg">VS</div>
-                            <div class="col-span-5 flex items-center justify-start gap-3">
-                                <div class="flex flex-col items-start">
-                                    <div class="flex items-center gap-2">
-                                        <img v-if="match.awayTeam.crest" :src="match.awayTeam.crest" :alt="match.awayTeam.name" class="w-6 h-6 object-contain" loading="lazy" />
-                                        <span class="font-medium text-gray-900">{{ match.awayTeam.name }} - [{{ match.awayTeam.position }}]</span>
-                                    </div>
-                                    <div class="flex items-center gap-1">
-                                        <span class="text-xs" :class="{
-                                            'text-green-600': match.awayTeam.position <= 4,
-                                            'text-yellow-600': match.awayTeam.position > 4 && match.awayTeam.position < 17,
-                                            'text-red-600': match.awayTeam.position >= 17
-                                        }">
-                                            {{ getTeamForm(match.awayTeam.position) }}
-                                        </span>
-                                        <UTooltip v-if="isTopTeam(match.awayTeam)" text="Cette équipe fait officiellement partie du top 4 selon les données de l'API">
-                                            <UBadge color="green" size="xs" class="ml-1 transition-opacity hover:opacity-80">
-                                                Top 4
-                                            </UBadge>
-                                        </UTooltip>
-                                        <UTooltip v-if="isBottomTeam(match.awayTeam)" text="Cette équipe fait officiellement partie du bottom 4 selon les données de l'API">
-                                            <UBadge color="red" size="xs" class="ml-1 transition-opacity hover:opacity-80">
-                                                Bottom 4
-                                            </UBadge>
-                                        </UTooltip>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                                <UBadge v-else-if="isCloseMatch(match)" color="orange" class="ml-2" size="xs">
+                                    Match important
+                                </UBadge>
+                            </template>
+                            <template #home-team-badges="{ team }">
+                                <UTooltip v-if="isTopTeam(team)" text="Cette équipe fait officiellement partie du top 4 selon les données de l'API">
+                                    <UBadge color="green" size="xs" class="ml-1 transition-opacity hover:opacity-80">
+                                        Top 4
+                                    </UBadge>
+                                </UTooltip>
+                                <UTooltip v-if="isBottomTeam(team)" text="Cette équipe fait officiellement partie du bottom 4 selon les données de l'API">
+                                    <UBadge color="red" size="xs" class="ml-1 transition-opacity hover:opacity-80">
+                                        Bottom 4
+                                    </UBadge>
+                                </UTooltip>
+                                <UBadge v-if="!isTopTeam(team) && team.position <= 4" color="green" size="xs" class="ml-1 transition-opacity hover:opacity-80">
+                                    Top 4
+                                </UBadge>
+                                <UBadge v-if="!isBottomTeam(team) && team.position >= 17" color="red" size="xs" class="ml-1 transition-opacity hover:opacity-80">
+                                    Bottom 4
+                                </UBadge>
+                            </template>
+                            <template #away-team-badges="{ team }">
+                                <UTooltip v-if="isTopTeam(team)" text="Cette équipe fait officiellement partie du top 4 selon les données de l'API">
+                                    <UBadge color="green" size="xs" class="ml-1 transition-opacity hover:opacity-80">
+                                        Top 4
+                                    </UBadge>
+                                </UTooltip>
+                                <UTooltip v-if="isBottomTeam(team)" text="Cette équipe fait officiellement partie du bottom 4 selon les données de l'API">
+                                    <UBadge color="red" size="xs" class="ml-1 transition-opacity hover:opacity-80">
+                                        Bottom 4
+                                    </UBadge>
+                                </UTooltip>
+                                <UBadge v-if="!isTopTeam(team) && team.position <= 4" color="green" size="xs" class="ml-1 transition-opacity hover:opacity-80">
+                                    Top 4
+                                </UBadge>
+                                <UBadge v-if="!isBottomTeam(team) && team.position >= 17" color="red" size="xs" class="ml-1 transition-opacity hover:opacity-80">
+                                    Bottom 4
+                                </UBadge>
+                            </template>
+                        </MatchDisplay>
                     </div>
                 </div>
                 <UEmpty v-else message="Aucun match à venir" />
@@ -201,6 +181,7 @@
 <script setup lang="ts">
 import type { LeagueData, LeagueMatches, League, Team, Match, MatchTeam, ApiResponse } from '~/types'
 import FootstatsFooter from '~/components/FootstatsFooter.vue'
+import MatchDisplay from '~/components/MatchDisplay.vue'
 
 const { isTopTeam, isBottomTeam, getTeamForm, isCloseMatch, getPointsDifference, isKeyMatch } = useLeagueStats()
 
