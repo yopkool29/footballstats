@@ -37,12 +37,10 @@ export interface Match {
         crest?: string  // URL du logo de l'équipe
     }
     date: string
-    competition: string
     status: 'SCHEDULED' | 'LIVE' | 'FINISHED'
 }
 
 export interface LeagueData {
-    name: string
     id: League
     allTeams: Team[]
     topTeams: Team[]

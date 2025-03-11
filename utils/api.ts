@@ -44,14 +44,6 @@ const headers = {
     'X-Auth-Token': config.footballDataApiKey as string
 } satisfies Record<string, string>
 
-const getLeagueName = (league: League): string => {
-    const leagueIds = {
-        'PL': 'Premier League',
-        'FL1': 'Ligue 1'
-    } as const
-    return leagueIds[league]
-}
-
 const convertTeam = (standing: FootballDataTeam): Team => ({
     id: standing.team.id,
     name: standing.team.name,
@@ -83,7 +75,6 @@ export const getTeams = async (league: League): Promise<LeagueData> => {
     const teams = standings.map(convertTeam)
 
     return {
-        name: getLeagueName(league),
         id: league,
         allTeams: teams,
         topTeams: teams.slice(0, 4),
@@ -133,7 +124,6 @@ export const getMatches = async (league: League): Promise<LeagueMatches> => {
             crest: match.awayTeam.crest
         },
         date: match.utcDate,
-        competition: getLeagueName(league),
         status: convertStatus(match.status)
     }))
 
