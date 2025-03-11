@@ -38,8 +38,6 @@ export default defineNuxtConfig({
         // Variables privées côté serveur uniquement
         footballDataApiKey: process.env.FOOTBALL_DATA_API_KEY,
         footballDataApiUrl: process.env.FOOTBALL_DATA_API_URL,
-        premierLeagueId: process.env.PREMIER_LEAGUE_ID,
-        ligue1Id: process.env.LIGUE_1_ID,
         cacheDuration: parseInt(process.env.CACHE_DURATION || '3600'),
         // Variables publiques (exposées au client)
         public: {

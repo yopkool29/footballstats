@@ -293,12 +293,13 @@ const formatDate = (dateStr: string) => {
     }).format(date)
 }
 
-const fetchTeams = async () => {
+const fetchTeams = async (from_cache = false) => {
     isLoadingTeams.value = true
     try {
         const response = await $fetch<ApiResponse<LeagueData>>(`/api/teams/${props.leagueId}`, {
             query: {
-                force: forceUpdate.value
+                force: forceUpdate.value,
+                from_cache: from_cache,
             }
         })
         leagueData.value = response.data
@@ -310,11 +311,12 @@ const fetchTeams = async () => {
     }
 }
 
-const fetchMatches = async () => {
+const fetchMatches = async (from_cache = false) => {
     isLoadingMatches.value = true
     try {
         const response = await $fetch<ApiResponse<LeagueMatches>>(`/api/matches/${props.leagueId}`, {
             query: {
+                from_cache: from_cache,
                 force: forceUpdate.value
             }
         })
@@ -381,8 +383,8 @@ interface LeagueStatsExpose {
 onMounted(() => {
     const currentForceUpdate = forceUpdate.value
     forceUpdate.value = false  // Désactiver temporairement
-    fetchMatches()
-    fetchTeams()
+    fetchMatches(true)
+    fetchTeams(true)
     forceUpdate.value = currentForceUpdate  // Restaurer la valeur
 })
 

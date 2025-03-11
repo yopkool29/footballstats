@@ -6,11 +6,12 @@ export default defineEventHandler(async (event): Promise<ApiResponse<LeagueData>
     const league = getRouterParam(event, 'league') as League
     const query = getQuery(event)
     const force = query.force === 'true'
+    const from_cache = query.from_cache === 'true'
 
     try {
         // Si force n'est pas activé, essayer de récupérer depuis le cache d'abord
         if (!force) {
-            const cachedData = await getCachedTeams(league)
+            const cachedData = await getCachedTeams(league, from_cache)
             if (cachedData) {
                 return {
                     data: cachedData,
