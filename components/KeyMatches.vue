@@ -65,7 +65,6 @@
                                 <div class="col-span-5 flex items-center justify-end gap-3">
                                     <div class="flex flex-col items-end">
                                         <div class="flex items-center gap-2">
-                                            <span class="font-medium text-gray-900">{{ match.homeTeam.name }} - [{{ match.homeTeam.position }}]</span>
                                             <img 
                                                 v-if="match.homeTeam.crest" 
                                                 :src="match.homeTeam.crest" 
@@ -73,6 +72,7 @@
                                                 class="h-6 w-6 object-contain"
                                                 loading="lazy"
                                             />
+                                            <span class="font-medium text-gray-900">{{ match.homeTeam.name }} - [{{ match.homeTeam.position }}]</span>
                                         </div>
                                         <div class="flex items-center gap-1">
                                             <span class="text-xs" :class="{

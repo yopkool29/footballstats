@@ -9,10 +9,10 @@ export default defineNuxtConfig({
     tailwindcss: {
         cssPath: '~/assets/css/main.scss',
     },
-    sourcemap: {
+    sourcemap: process.env.NODE_ENV === 'development' ? {
         server: true,
         client: true,
-    },
+    } : false,
     app: {
         head: {
             title: 'Football Stats Analyzer',
