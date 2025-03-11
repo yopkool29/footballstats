@@ -115,8 +115,8 @@ export const getMatches = async (league: League): Promise<LeagueMatches> => {
     const data = await response.json()
     const matches = data.matches as FootballDataMatch[]
 
-    // Get only the next 5 matches
-    const nextMatches: Match[] = matches.slice(0, 5).map((match: FootballDataMatch) => ({
+    // Get only the next 10 matches
+    const nextMatches: Match[] = matches.slice(0, 10).map((match: FootballDataMatch) => ({
         id: match.id,
         homeTeam: {
             id: match.homeTeam.id,
